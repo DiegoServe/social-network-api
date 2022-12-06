@@ -42,3 +42,21 @@ const thoughtController = {
       .then((dbThoughtData) => res.json(dbThoughtData))
       .catch(err => res.status(400).json(err));
   },
+
+  // add reaction to thought
+  addReaction({ params, body }, res) {
+    Thought.findOneAndUpdate(
+      { _id: params.thoughtId },
+      { $push: { reactions: body } },
+      { new: true }
+    )
+      .select("-__v")
+      .then((dbThoughtData) => {
+        if (!dbThoughtData) {
+          res.status(404).json({ message: "No thoughts with this ID." });
+          return;
+        }
+        res.json(dbThoughtData);
+      })
+      .catch(err => res.status(400).json(err));
+  },
