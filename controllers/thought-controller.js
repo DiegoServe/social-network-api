@@ -28,3 +28,17 @@ const thoughtController = {
         res.status(404).json(err);
       });
   },
+
+  // create Thought
+  createThought({ body }, res) {
+    Thought.create(body)
+      .then(({ _id }) => {
+        return User.findOneAndUpdate(
+          { _id: params.userId },
+          { $push: { thoughts: _id } },
+          { new: true, runValidators: true }
+        );
+      })
+      .then((dbThoughtData) => res.json(dbThoughtData))
+      .catch(err => res.status(400).json(err));
+  },
